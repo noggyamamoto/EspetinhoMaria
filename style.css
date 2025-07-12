@@ -1,0 +1,131 @@
+/* Reset e Estilos Base */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Arial', sans-serif;
+}
+
+body {
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+/* Header */
+.header {
+    background-color: #fff;
+    padding: 20px 0;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+
+.nav-bar{
+    background-color: #FBA726;
+}
+
+.main-nav {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.main-nav ul {
+    display: flex;
+    list-style: none;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.main-nav li {
+    margin: 0 15px;
+    position: relative;
+}
+
+.main-nav a {
+    text-decoration: none;
+    color: #333;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 14px;
+    letter-spacing: 1px;
+    transition: color 0.3s;
+    padding: 5px 0;
+    display: inline-block;
+}
+
+.main-nav a:hover,
+.main-nav {
+    color: #FBA726; /* Vermelho escuro para hover/ativo */
+}
+
+.main-nav li.admin-link {
+    margin-left: 30px;
+}
+
+.main-nav li.admin-link a {
+    color: #666;
+    font-weight: normal;
+}
+
+/* Hero Section */
+.hero-section {
+    text-align: center;
+    padding: 80px 20px;
+    background-color: #fff;
+    margin: 30px auto;
+    max-width: 1200px;
+    width: 90%;
+}
+
+.hero-title {
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    color: #222;
+    letter-spacing: 1px;
+}
+
+.hero-subtitle {
+    font-size: 18px;
+    color: #666;
+    letter-spacing: 1px;
+}
+
+/* Brand Section */
+.brand-section {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.brand-name {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #222;
+    letter-spacing: 1px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+    .main-nav li {
+        margin: 5px 10px;
+    }
+    
+    .main-nav li.admin-link {
+        margin-left: 10px;
+        margin-top: 15px;
+    }
+    
+    .hero-title {
+        font-size: 36px;
+    }
+    
+    .hero-subtitle {
+        font-size: 16px;
+    }
+    
+    .brand-name {
+        font-size: 28px;
+    }
+}
