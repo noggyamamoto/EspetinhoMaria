@@ -1,4 +1,4 @@
-/* Reset básico */
+/* Reset e estrutura base */
 * {
   margin: 0;
   padding: 0;
@@ -11,7 +11,7 @@ body {
   color: #333;
 }
 
-/* Barra amarela no topo */
+/* Barra amarela */
 .barra-amarela {
   height: 10px;
   background-color: #f5a623;
@@ -59,7 +59,7 @@ body {
   background-color: #e6951b;
 }
 
-/* Hero Section */
+/* Hero */
 .hero {
   background: linear-gradient(to right, #2e2e2e, #555);
   color: white;
@@ -80,7 +80,7 @@ body {
   width: 100%;
 }
 
-/* Seção Cardápio */
+/* Cardápio */
 .cardapio {
   padding: 40px 20px;
   max-width: 1200px;
@@ -90,6 +90,7 @@ body {
 .tabs {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 30px;
   margin-bottom: 30px;
   border-bottom: 2px solid #eee;
@@ -110,10 +111,18 @@ body {
   color: #e53935;
 }
 
+.produtos-container {
+  min-height: 200px;
+}
+
 .produtos {
-  display: grid;
+  display: none;
   grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   gap: 20px;
+}
+
+.produtos.active {
+  display: grid;
 }
 
 .produto {
@@ -141,7 +150,10 @@ body {
   font-weight: bold;
 }
 
-/* Botão finalizar */
+.produto input[type="checkbox"] {
+  margin-top: 8px;
+}
+
 .finalizar {
   text-align: center;
   margin-top: 30px;
@@ -221,9 +233,8 @@ body {
   margin-bottom: 10px;
 }
 
-/* Responsividade */
+/* Responsivo */
 @media (max-width: 768px) {
-
   .nav-container {
     flex-direction: column;
     align-items: center;

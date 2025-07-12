@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Espetinho da Maria</title>
   <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
 </head>
 <body>
 
@@ -17,7 +18,7 @@
       <ul class="menu-links">
         <li><a href="#">HOME</a></li>
         <li><a href="#cardapio">CARDÁPIO</a></li>
-        <li><a href="#">SOBRE NÓS</a></li>
+        <li><a href="#history">SOBRE NÓS</a></li>
         <li><a href="#">CONTATOS</a></li>
       </ul>
       <a href="#" class="admin-btn">ACESSO ADMINISTRATIVO</a>
@@ -38,62 +39,105 @@
   <!-- Seção Cardápio -->
   <section id="cardapio" class="cardapio">
     <div class="tabs">
-      <button class="tab active">BEBIDAS</button>
-      <button class="tab">ESPETOS</button>
-      <button class="tab">ACOMPANHAMENTOS</button>
-      <button class="tab">JANTINHA</button>
+      <button class="tab active" data-tab="bebidas">BEBIDAS</button>
+      <button class="tab" data-tab="espetos">ESPETOS</button>
+      <button class="tab" data-tab="acompanhamentos">ACOMPANHAMENTOS</button>
+      <button class="tab" data-tab="jantinha">JANTINHA</button>
     </div>
 
-    <div class="produtos">
-      <div class="produto">
-        <img src="coca.png" alt="Coca Cola">
-        <p>Coca Cola 350 ml</p>
-        <span>R$ 5,00</span>
+    <div class="produtos-container">
+      <!-- Abas de produtos -->
+      <div class="produtos active" id="bebidas">
+        <div class="produto">
+          <img src="coca.png" alt="Coca Cola">
+          <p>Coca Cola 350 ml</p>
+          <span>R$ 5,00</span><br>
+          <input type="checkbox" value="Coca Cola 350 ml" data-preco="5">
+        </div>
+        <div class="produto">
+          <img src="sprite.png" alt="Sprite">
+          <p>Sprite 350 ml</p>
+          <span>R$ 5,00</span><br>
+          <input type="checkbox" value="Sprite 350 ml" data-preco="5">
+        </div>
+        <div class="produto">
+          <img src="guarana.png" alt="Guaraná">
+          <p>Guaraná 350 ml</p>
+          <span>R$ 5,00</span><br>
+          <input type="checkbox" value="Guaraná 350 ml" data-preco="5">
+        </div>
+        <div class="produto">
+          <img src="heineken.png" alt="Heineken">
+          <p>Heineken 350 ml</p>
+          <span>R$ 6,00</span><br>
+          <input type="checkbox" value="Heineken 350 ml" data-preco="6">
+        </div>
+        <div class="produto">
+          <img src="brahma.png" alt="Brahma">
+          <p>Brahma 350 ml</p>
+          <span>R$ 5,00</span><br>
+          <input type="checkbox" value="Brahma 350 ml" data-preco="5">
+        </div>
+        <div class="produto">
+          <img src="agua.png" alt="Água Mineral">
+          <p>Água Mineral 500 ml</p>
+          <span>R$ 3,00</span><br>
+          <input type="checkbox" value="Água Mineral 500 ml" data-preco="3">
       </div>
-      <div class="produto">
-        <img src="sprite.png" alt="Sprite">
-        <p>Sprite 350 ml</p>
-        <span>R$ 5,00</span>
-      </div>
-      <div class="produto">
-        <img src="guarana.png" alt="Guaraná">
-        <p>Guaraná 350 ml</p>
-        <span>R$ 5,00</span>
-      </div>
-      <div class="produto">
-        <img src="pepsi.png" alt="Pepsi">
-        <p>Pepsi 350 ml</p>
-        <span>R$ 5,00</span>
-      </div>
-      <div class="produto">
-        <img src="skol.png" alt="Skol">
-        <p>Skol 350 ml</p>
-        <span>R$ 5,00</span>
-      </div>
-      <div class="produto">
-        <img src="heineken.png" alt="Heineken">
-        <p>Heineken 350 ml</p>
-        <span>R$ 6,00</span>
-      </div>
-      <div class="produto">
-        <img src="brahma.png" alt="Brahma">
-        <p>Brahma 350 ml</p>
-        <span>R$ 5,00</span>
-      </div>
-      <div class="produto">
-        <img src="51ice.png" alt="51 Ice">
-        <p>51 Ice 269 ml</p>
-        <span>R$ 6,00</span>
-      </div>
-    </div>
 
-    <div class="finalizar">
-      <button class="btn-finalizar">FINALIZAR COMPRA</button>
+      <div class="produtos" id="espetos">
+        <div class="produto">
+          <img src="espetinho_contrafile.png" alt="Contrafilé">
+          <p>Contrafilé</p>
+          <span>R$ 10,00</span><br>
+          <input type="checkbox" value="Contrafilé" data-preco="10">
+        </div>
+        <div class="produto">
+          <img src="espetinho_alcatra.png" alt="Alcatra">
+          <p>Alcatra</p>
+          <span>R$ 10,00</span><br>
+          <input type="checkbox" value="Alcatra" data-preco="10">
+        </div>
+        <div class="produto">
+          <img src="frango_bacon.png" alt="Frango com bacon">
+          <p>Frango com bacon</p>
+          <span>R$ 10,00</span><br>
+          <input type="checkbox" value="Frango com bacon" data-preco="10">
+        </div>
+        <div class="produto">
+          <img src="asinha_frango.png" alt="Asinha de frango">
+          <p>Asinha de frango</p>
+          <span>R$ 10,00</span><br>
+          <input type="checkbox" value="Asinha de frango" data-preco="10">
+        </div>
+        <div class="produto">
+          <img src="linguica.png" alt="Linguiça de porco">
+          <p>Linguiça de porco</p>
+          <span>R$ 10,00</span><br>
+          <input type="checkbox" value="Linguiça de porco" data-preco="10">
+        </div>
+        <div class="produto">
+          <img src="coracao_galinha.png" alt="Coração de galinha">
+          <p>Coração de galinha</p>
+          <span>R$ 10,00</span><br>
+          <input type="checkbox" value="Coração de galinha" data-preco="10">
+      </div>
+
+      <div class="produtos" id="acompanhamentos">
+        <p>Acompanhamentos disponíveis em breve!</p>
+      </div>
+
+      <div class="produtos" id="jantinha">
+        <p>Jantinhas disponíveis em breve!</p>
+      </div>
     </div>
   </section>
+  <div class="finalizar">
+      <button class="btn-finalizar" onclick="gerarListaDeItens()">FINALIZAR COMPRA</button>
+    </div>
 
   <!-- Seção História -->
-  <section class="history">
+  <section class="history" id="history">
     <div class="container">
       <div class="text">
         <h2>NOSSA HISTÓRIA</h2>
