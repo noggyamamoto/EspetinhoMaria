@@ -62,13 +62,38 @@ body {
     margin-left: 30px;
 }
 
-.main-nav li.admin-link a {
+.admin-link:hover {
+    background-color: #fff;
+    color: #fff;
+}
+
+.admin-link{
+   background-color: #FBA726;
+    padding: 5px 10px;
+    border-radius: 5px;
+    color: #fff;
+}
+
+.main-nav {
     color: #666;
     font-weight: normal;
 }
 
 /* Hero Section */
-.hero-section {
+home-container {
+    background-size: cover;
+    background-position: center;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-img{
+    width: 50%;
+}
+
+.home-section {
     text-align: center;
     padding: 80px 20px;
     background-color: #fff;
