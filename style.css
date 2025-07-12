@@ -75,13 +75,91 @@ body {
   margin-bottom: 10px;
 }
 
-.hero-text p {
-  font-size: 16px;
-}
-
 .hero-logo img {
   max-width: 250px;
   width: 100%;
+}
+
+/* Seção Cardápio */
+.cardapio {
+  padding: 40px 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #eee;
+}
+
+.tab {
+  background: none;
+  border: none;
+  padding: 10px 15px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #333;
+  border-bottom: 3px solid transparent;
+}
+
+.tab.active {
+  border-color: #e53935;
+  color: #e53935;
+}
+
+.produtos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 20px;
+}
+
+.produto {
+  background-color: #fff;
+  padding: 15px;
+  text-align: center;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.produto img {
+  width: 100px;
+  height: auto;
+  margin-bottom: 10px;
+}
+
+.produto p {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.produto span {
+  color: #e53935;
+  font-weight: bold;
+}
+
+/* Botão finalizar */
+.finalizar {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.btn-finalizar {
+  background-color: #e53935;
+  color: white;
+  padding: 12px 24px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.btn-finalizar:hover {
+  background-color: #c62828;
 }
 
 /* História */
@@ -146,7 +224,6 @@ body {
 /* Responsividade */
 @media (max-width: 768px) {
 
-  /* Cabeçalho com navegação vertical */
   .nav-container {
     flex-direction: column;
     align-items: center;
@@ -165,7 +242,6 @@ body {
     max-width: 220px;
   }
 
-  /* Hero section em coluna */
   .hero {
     flex-direction: column;
     text-align: center;
@@ -180,7 +256,6 @@ body {
     margin-top: 20px;
   }
 
-  /* Seção história */
   .history .container {
     flex-direction: column;
     text-align: center;
@@ -190,11 +265,18 @@ body {
     margin-top: 20px;
   }
 
-  /* Rodapé empilhado */
   .footer {
     flex-direction: column;
     text-align: center;
     gap: 20px;
   }
 
+  .tabs {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .produto img {
+    width: 80px;
+  }
 }
