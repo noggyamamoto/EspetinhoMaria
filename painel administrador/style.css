@@ -1,3 +1,6 @@
+/* font-family: 'Kaushan Script', cursive; */
+@import url('https://fonts.googleapis.com/css2?family=Kaushan+Script&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
 /* RESET + STRUCTURE */
 * {
   margin: 0;
@@ -12,7 +15,7 @@ html, body {
 body {
   display: flex;
   flex-direction: column;
-  font-family: Arial, sans-serif;
+  font-family: Roboto, sans-serif;
   background-color: #1f1f1f;
   color: white;
 }
@@ -113,53 +116,30 @@ form {
 /* FOOTER */
 footer {
   background-color: #000;
-  padding: 20px 40px;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   flex-wrap: wrap;
-  font-size: 13px;
   gap: 10px;
 }
-.footer-left, .footer-right {
-  flex: 1;
-  min-width: 200px;
-}
-.footer-left p {
-  margin-bottom: 5px;
-  line-height: 1.4;
-}
-.social-icons {
-  display: flex;
-  gap: 10px;
-  margin-top: 6px;
-}
-.social-icons img {
-  width: 22px;
-  height: 22px;
-  object-fit: cover;
-  border-radius: 50%;
-  cursor: pointer;
-}
-
-/* TEXTOS E LINKS */
-.footer-right {
-  color: #ccc;
-  text-align: right;
-}
-.footer-right a {
-  color: #fba726;
+.barra-rodape p {
+  color: #fff;
   text-decoration: none;
-  margin: 0 2px;
+  font-size: 16px;
 }
-.footer-right a:hover {
-  color: #e0941f;
+.barra-rodape a{
+    color: #fff;
+    text-decoration: none;
 }
-.footer-right p {
-  margin-bottom: 4px;
-  line-height: 1.4;
+.barra-rodape{
+    background-color: #000;
+    color: #fff;
+    text-align: center;
+    padding: 1rem;
 }
-.footer-right .copyright {
-  color: #aaa;
-  font-size: 12px;
-  margin-bottom: 6px;
+.barra-rodape:link, .barra-rodape:visited{
+    color: #fff;
+    text-decoration: none;
+}
+.barra-rodape:hover a {
+    color: #e6951b;
 }
