@@ -19,7 +19,7 @@ body {
 
 /* Menu principal */
 .menu-principal {
-  background: linear-gradient(to right, #1a1a1a, #333);
+  background: linear-gradient(to right, #1a1a1a, #292626);
   padding: 20px 0;
 }
 
@@ -61,7 +61,7 @@ body {
 
 /* Hero */
 .hero {
-  background: linear-gradient(to right, #2e2e2e, #555);
+  background: linear-gradient(to right, #2e2e2e, #5e5d5d);
   color: white;
   display: flex;
   justify-content: space-between;
@@ -83,8 +83,8 @@ body {
 /* Cardápio */
 .cardapio {
   padding: 40px 20px;
-  max-width: 1200px;
   margin: auto;
+  background-color: #eee;
 }
 
 .tabs {
