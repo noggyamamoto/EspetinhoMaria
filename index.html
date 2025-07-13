@@ -10,16 +10,16 @@
 <body>
 
   <!-- Barra superior amarela -->
-  <div class="barra-amarela"></div>
+  <div class="barra-amarela" id="barra-amarela"></div>
 
   <!-- Menu principal -->
   <header class="menu-principal">
     <nav class="nav-container">
       <ul class="menu-links">
-        <li><a href="#">HOME</a></li>
+        <li><a href="#barra-amarela">HOME</a></li>
         <li><a href="#cardapio">CARDÁPIO</a></li>
         <li><a href="#history">SOBRE NÓS</a></li>
-        <li><a href="#">CONTATOS</a></li>
+        <li><a href="#social">CONTATOS</a></li>
       </ul>
       <a href="#" class="admin-btn">ACESSO ADMINISTRATIVO</a>
     </nav>
@@ -53,36 +53,66 @@
           <p>Coca Cola 350 ml</p>
           <span>R$ 5,00</span><br>
           <input type="checkbox" value="Coca Cola 350 ml" data-preco="5">
+          <div class="quantidade-container">
+            <button class="btn-quantidade diminuir">-</button>
+            <span class="quantidade">1</span>
+            <button class="btn-quantidade aumentar">+</button>
+          </div>
         </div>
         <div class="produto">
           <img src="img/sprite.png" alt="Sprite">
           <p>Sprite 350 ml</p>
           <span>R$ 5,00</span><br>
           <input type="checkbox" value="Sprite 350 ml" data-preco="5">
+          <div class="quantidade-container">
+            <button class="btn-quantidade diminuir">-</button>
+            <span class="quantidade">1</span>
+            <button class="btn-quantidade aumentar">+</button>
+          </div>
         </div>
         <div class="produto">
           <img src="img/guarana.png" alt="Guaraná">
           <p>Guaraná 350 ml</p>
           <span>R$ 5,00</span><br>
           <input type="checkbox" value="Guaraná 350 ml" data-preco="5">
+          <div class="quantidade-container">
+            <button class="btn-quantidade diminuir">-</button>
+            <span class="quantidade">1</span>
+            <button class="btn-quantidade aumentar">+</button>
+          </div>
         </div>
         <div class="produto">
           <img src="img/heineken.png" alt="Heineken">
           <p>Heineken 350 ml</p>
           <span>R$ 6,00</span><br>
           <input type="checkbox" value="Heineken 350 ml" data-preco="6">
+          <div class="quantidade-container">
+            <button class="btn-quantidade diminuir">-</button>
+            <span class="quantidade">1</span>
+            <button class="btn-quantidade aumentar">+</button>
+          </div>
         </div>
         <div class="produto">
           <img src="img/brahma.png" alt="Brahma">
           <p>Brahma 350 ml</p>
           <span>R$ 5,00</span><br>
           <input type="checkbox" value="Brahma 350 ml" data-preco="5">
+          <div class="quantidade-container">
+            <button class="btn-quantidade diminuir">-</button>
+            <span class="quantidade">1</span>
+            <button class="btn-quantidade aumentar">+</button>
+          </div>
         </div>
         <div class="produto">
-          <img src="img/agua.png" alt="Água Mineral">
-          <p>Água Mineral 500 ml</p>
+          <img src="img/agua.png" alt="Água">
+          <p>Água 500 ml</p>
           <span>R$ 3,00</span><br>
-          <input type="checkbox" value="Água Mineral 500 ml" data-preco="3">
+          <input type="checkbox" value="Água 500 ml" data-preco="3">
+          <div class="quantidade-container">
+            <button class="btn-quantidade diminuir">-</button>
+            <span class="quantidade">1</span>
+            <button class="btn-quantidade aumentar">+</button>
+          </div>
       </div>
         </div>
 
@@ -92,36 +122,66 @@
           <p>Contrafilé</p>
           <span>R$ 10,00</span><br>
           <input type="checkbox" value="Contrafilé" data-preco="10">
+          <div class="quantidade-container">
+            <button class="btn-quantidade diminuir">-</button>
+            <span class="quantidade">1</span>
+            <button class="btn-quantidade aumentar">+</button>
+          </div>
         </div>
         <div class="produto">
           <img src="img/alcatra.png" alt="Alcatra">
           <p>Alcatra</p>
           <span>R$ 10,00</span><br>
           <input type="checkbox" value="Alcatra" data-preco="10">
+          <div class="quantidade-container">
+            <button class="btn-quantidade diminuir">-</button>
+            <span class="quantidade">1</span>
+            <button class="btn-quantidade aumentar">+</button>
+          </div>
         </div>
         <div class="produto">
           <img src="img/frango_bacon.png" alt="Frango com bacon">
           <p>Frango com bacon</p>
           <span>R$ 10,00</span><br>
           <input type="checkbox" value="Frango com bacon" data-preco="10">
+          <div class="quantidade-container">
+            <button class="btn-quantidade diminuir">-</button>
+            <span class="quantidade">1</span>
+            <button class="btn-quantidade aumentar">+</button>
+          </div>
         </div>
         <div class="produto">
           <img src="img/asinha_frango.png" alt="Asinha de frango">
           <p>Asinha de frango</p>
           <span>R$ 10,00</span><br>
           <input type="checkbox" value="Asinha de frango" data-preco="10">
+          <div class="quantidade-container">
+            <button class="btn-quantidade diminuir">-</button>
+            <span class="quantidade">1</span>
+            <button class="btn-quantidade aumentar">+</button>
+          </div>
         </div>
         <div class="produto">
           <img src="img/linguica.png" alt="Linguiça de porco">
           <p>Linguiça de porco</p>
           <span>R$ 10,00</span><br>
           <input type="checkbox" value="Linguiça de porco" data-preco="10">
+          <div class="quantidade-container">
+            <button class="btn-quantidade diminuir">-</button>
+            <span class="quantidade">1</span>
+            <button class="btn-quantidade aumentar">+</button>
+          </div>
         </div>
         <div class="produto">
           <img src="img/coracao_galinha.png" alt="Coração de galinha">
           <p>Coração de galinha</p>
           <span>R$ 10,00</span><br>
           <input type="checkbox" value="Coração de galinha" data-preco="10">
+          <div class="quantidade-container">
+            <button class="btn-quantidade diminuir">-</button>
+            <span class="quantidade">1</span>
+            <button class="btn-quantidade aumentar">+</button>
+          </div>
       </div>
       </div>
 
@@ -131,36 +191,66 @@
           <p>Arroz branco</p>
           <span>R$ 5,00</span><br>
           <input type="checkbox" value="Arroz branco" data-preco="5">
+          <div class="quantidade-container">
+            <button class="btn-quantidade diminuir">-</button>
+            <span class="quantidade">1</span>
+            <button class="btn-quantidade aumentar">+</button>
+          </div>
         </div>
         <div class="produto">
           <img src="img/arroz_carreteiro.png" alt="Arroz Carreteiro">
-          <p>Arroz Carreteiro</p>
+          <p>Arroz carreteiro</p>
           <span>R$ 15,00</span><br>
           <input type="checkbox" value="Arroz branco" data-preco="15">
+          <div class="quantidade-container">
+            <button class="btn-quantidade diminuir">-</button>
+            <span class="quantidade">1</span>
+            <button class="btn-quantidade aumentar">+</button>
+          </div>
         </div>
         <div class="produto">
           <img src="img/feijao_tropeiro.png" alt="Feijão Tropeiro">
-          <p>Feijão Tropeiro</p>
+          <p>Feijão tropeiro</p>
           <span>R$ 7,00</span><br>
           <input type="checkbox" value="Feijão Tropeiro" data-preco="7">
+          <div class="quantidade-container">
+            <button class="btn-quantidade diminuir">-</button>
+            <span class="quantidade">1</span>
+            <button class="btn-quantidade aumentar">+</button>
+          </div>
         </div>
         <div class="produto">
             <img src="img/mandioca.png" alt="Mandioca">
             <p>Mandioca cozida</p>
             <span>R$ 5,00</span><br>
             <input type="checkbox" value="Mandioca cozida" data-preco="5">
+            <div class="quantidade-container">
+            <button class="btn-quantidade diminuir">-</button>
+            <span class="quantidade">1</span>
+            <button class="btn-quantidade aumentar">+</button>
+          </div>
         </div>
         <div class="produto">
           <img src="img/pao_alho.png" alt="Pão de alho">
           <p>Pão de alho</p>
           <span>R$ 12,00</span><br>
           <input type="checkbox" value="Pão de alho" data-preco="12">
+          <div class="quantidade-container">
+            <button class="btn-quantidade diminuir">-</button>
+            <span class="quantidade">1</span>
+            <button class="btn-quantidade aumentar">+</button>
+          </div>
         </div>
         <div class="produto">
           <img src="img/vinagrete.png" alt="Vinagrete">
           <p>Vinagrete</p>
           <span>R$ 3,00</span><br>
           <input type="checkbox" value="Vinagrete" data-preco="3">
+          <div class="quantidade-container">
+            <button class="btn-quantidade diminuir">-</button>
+            <span class="quantidade">1</span>
+            <button class="btn-quantidade aumentar">+</button>
+          </div>
         </div>    
       </div>
 
@@ -171,6 +261,11 @@
           <p>(Arroz branco, feijão tropeiro, espetinho, mandioca e vinagrete)</p>
           <span>R$ 21,00</span><br>
           <input type="checkbox" value="Jantinha Completa" data-preco="21">
+          <div class="quantidade-container">
+            <button class="btn-quantidade diminuir">-</button>
+            <span class="quantidade">1</span>
+            <button class="btn-quantidade aumentar">+</button>
+          </div>
         </div>
         <div class="produto">
           <img src="img/jantinha_completa.png" alt="Jantinha Completa">
@@ -178,6 +273,11 @@
           <p>(Arroz carreteiro, feijão tropeiro, espetinho, mandioca e vinagrete)</p>
           <span>R$ 30,00</span><br>
           <input type="checkbox" value="Jantinha Completa" data-preco="30">
+          <div class="quantidade-container">
+            <button class="btn-quantidade diminuir">-</button>
+            <span class="quantidade">1</span>
+            <button class="btn-quantidade aumentar">+</button>
+          </div>
         </div> 
       </div>
     </div>
@@ -197,9 +297,6 @@
         <p>Cada mordida revela o aroma e o gosto que dedicamos à nossa comida, feita com amor para reunir as pessoas ao redor da mesa.</p>
         <p>Venha conhecer e saborear a experiência de um bom churrasquinho na brasa com o verdadeiro significado da tradição!</p>
       </div>
-      <div class="image">
-        <img src="churrasco.jpg" alt="Churrasco">
-      </div>
     </div>
   </section>
 
@@ -207,14 +304,19 @@
   <footer class="footer">
     <div class="address">
       <h3>NOSSO ENDEREÇO</h3>
-      <p>Rua do Sabor, 123 - Centro</p>
-      <p>Seg a Dom - 18h às 23h</p>
+      <p>QR 410/412 - Samambaia norte, Brasília - DF, 72320-021</p>
+      <p>Seg a Sex - 18h às 23h</p>
     </div>
-    <div class="social">
+    <div class="social" id="social">
       <h3>NOSSAS CONEXÕES</h3>
-      <p>Instagram | Facebook | WhatsApp</p>
+      <a href="https://www.instagram.com/espetinhomaria_/" target="_blank" class="sociais">Instagram</a>
+      <a href="https://wa.me/5561985487640" class="sociais" target="_blank">WhatsApp</a>
     </div>
   </footer>
-
+    <div class="barra-rodape">
+        <p>Desenvolvido por<a href="https://www.linkedin.com/in/danielle-ester-564052325/" target="_blank"> Danielle Ester</a>, <a class="footer-nome" href="https://www.linkedin.com/in/joão-nogueira-5898902b2/" target="_blank">João Nogueira </a>e<a class="footer-nome" href="https://www.linkedin.com/in/mayara-vieira-00259926b/" target="_blank"> Mayara Vieira</a>.<br>
+			copyright © 2025 todos os direitos reservados.
+		</p>
+    </div>
 </body>
 </html>
