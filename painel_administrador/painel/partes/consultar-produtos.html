@@ -1,0 +1,97 @@
+<div class="table-container">
+    <div class="table-header">
+        <h3>Consultar Produtos</h3>
+        <button class="btn btn-green" id="btnAddProduto">Adicionar Novo Produto</button>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Preço</th>
+                <th>ID Estoque</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="produtos-tbody">
+        </tbody>
+    </table>
+</div>
+<!-- Modal de cadastro/edição -->
+<div id="modalProduto" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.3);align-items:center;justify-content:center;z-index:9999;">
+  <form id="formProduto" style="background:#fff;padding:20px;border-radius:8px;min-width:300px;max-width:90vw;">
+    <h4 id="modalTitulo">Novo Produto</h4>
+    <input type="hidden" id="produtoId">
+    <div style="margin-bottom:10px;">
+      <label>Preço:</label>
+      <input type="number" step="0.01" id="produtoPreco" required>
+    </div>
+    <div style="margin-bottom:10px;">
+      <label>ID Estoque:</label>
+      <input type="number" id="produtoEstoque" required>
+    </div>
+    <button type="submit" class="btn btn-green">Salvar</button>
+    <button type="button" class="btn btn-red" id="btnFecharModal">Cancelar</button>
+  </form>
+</div>
+<script>
+async function carregarProdutos() {
+  const tbody = document.getElementById('produtos-tbody');
+  tbody.innerHTML = '<tr><td colspan="4">Carregando...</td></tr>';
+  const res = await fetch('/api/produtos');
+  const produtos = await res.json();
+  tbody.innerHTML = '';
+  produtos.forEach(prod => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${prod.id_produto}</td>
+      <td>R$ ${Number(prod.preco_unitario).toFixed(2)}</td>
+      <td>${prod.id_estoque}</td>
+      <td>
+        <button class='btn btn-blue' onclick='editarProduto(${prod.id_produto},${prod.preco_unitario},${prod.id_estoque})'>Editar</button>
+        <button class='btn btn-red' onclick='excluirProduto(${prod.id_produto})'>Excluir</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+carregarProdutos();
+
+// Modal
+const modal = document.getElementById('modalProduto');
+const form = document.getElementById('formProduto');
+const btnAdd = document.getElementById('btnAddProduto');
+const btnFechar = document.getElementById('btnFecharModal');
+btnAdd.onclick = () => {
+  document.getElementById('modalTitulo').textContent = 'Novo Produto';
+  form.reset();
+  document.getElementById('produtoId').value = '';
+  modal.style.display = 'flex';
+};
+btnFechar.onclick = () => modal.style.display = 'none';
+form.onsubmit = async (e) => {
+  e.preventDefault();
+  const id = document.getElementById('produtoId').value;
+  const preco = document.getElementById('produtoPreco').value;
+  const estoque = document.getElementById('produtoEstoque').value;
+  if (id) {
+    await fetch(`/api/produtos/${id}`, {method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({preco_unitario:preco,id_estoque:estoque})});
+  } else {
+    await fetch('/api/produtos', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({preco_unitario:preco,id_estoque:estoque})});
+  }
+  modal.style.display = 'none';
+  carregarProdutos();
+};
+window.editarProduto = (id, preco, estoque) => {
+  document.getElementById('modalTitulo').textContent = 'Editar Produto';
+  document.getElementById('produtoId').value = id;
+  document.getElementById('produtoPreco').value = preco;
+  document.getElementById('produtoEstoque').value = estoque;
+  modal.style.display = 'flex';
+};
+window.excluirProduto = async (id) => {
+  if (confirm('Deseja excluir este produto?')) {
+    await fetch(`/api/produtos/${id}`, {method:'DELETE'});
+    carregarProdutos();
+  }
+};
+</script>

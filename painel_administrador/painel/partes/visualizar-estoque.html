@@ -1,0 +1,108 @@
+<div class="table-container">
+    <div class="table-header">
+        <h3>Visualizar Estoque</h3>
+        <button class="btn btn-green" id="btnAddEstoque">Adicionar Item ao Estoque</button>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Descrição</th>
+                <th>Categoria</th>
+                <th>Data Cadastro</th>
+                <th>Disponível</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody id="estoque-tbody">
+        </tbody>
+    </table>
+</div>
+<!-- Modal de cadastro/edição -->
+<div id="modalEstoque" style="display:none;position:fixed;top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.3);align-items:center;justify-content:center;z-index:9999;">
+  <form id="formEstoque" style="background:#fff;padding:20px;border-radius:8px;min-width:300px;max-width:90vw;">
+    <h4 id="modalTituloEstoque">Novo Item de Estoque</h4>
+    <input type="hidden" id="estoqueId">
+    <div style="margin-bottom:10px;">
+      <label>Descrição:</label>
+      <input type="text" id="estoqueDescricao" required>
+    </div>
+    <div style="margin-bottom:10px;">
+      <label>Categoria:</label>
+      <input type="text" id="estoqueCategoria" required>
+    </div>
+    <div style="margin-bottom:10px;">
+      <label>Disponível:</label>
+      <select id="estoqueDisponivel"><option value="1">Sim</option><option value="0">Não</option></select>
+    </div>
+    <button type="submit" class="btn btn-green">Salvar</button>
+    <button type="button" class="btn btn-red" id="btnFecharModalEstoque">Cancelar</button>
+  </form>
+</div>
+<script>
+async function carregarEstoque() {
+  const tbody = document.getElementById('estoque-tbody');
+  tbody.innerHTML = '<tr><td colspan="6">Carregando...</td></tr>';
+  const res = await fetch('/api/estoques');
+  const estoques = await res.json();
+  tbody.innerHTML = '';
+  estoques.forEach(e => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${e.id_estoque}</td>
+      <td>${e.descricao}</td>
+      <td>${e.categoria}</td>
+      <td>${e.data_cadastro}</td>
+      <td>${e.disponivel ? 'Sim' : 'Não'}</td>
+      <td>
+        <button class='btn btn-blue' onclick='editarEstoque(${e.id_estoque},"${e.descricao}","${e.categoria}",${e.disponivel})'>Editar</button>
+        <button class='btn btn-red' onclick='excluirEstoque(${e.id_estoque})'>Excluir</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+carregarEstoque();
+
+// Modal
+const modal = document.getElementById('modalEstoque');
+const form = document.getElementById('formEstoque');
+const btnAdd = document.getElementById('btnAddEstoque');
+const btnFechar = document.getElementById('btnFecharModalEstoque');
+btnAdd.onclick = () => {
+  document.getElementById('modalTituloEstoque').textContent = 'Novo Item de Estoque';
+  form.reset();
+  document.getElementById('estoqueId').value = '';
+  modal.style.display = 'flex';
+};
+btnFechar.onclick = () => modal.style.display = 'none';
+form.onsubmit = async (e) => {
+  e.preventDefault();
+  const id = document.getElementById('estoqueId').value;
+  const descricao = document.getElementById('estoqueDescricao').value;
+  const categoria = document.getElementById('estoqueCategoria').value;
+  const disponivel = document.getElementById('estoqueDisponivel').value;
+  const data_cadastro = new Date().toISOString().slice(0,10);
+  if (id) {
+    await fetch(`/api/estoques/${id}`, {method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({descricao,categoria,disponivel,data_cadastro})});
+  } else {
+    await fetch('/api/estoques', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({descricao,categoria,disponivel,data_cadastro})});
+  }
+  modal.style.display = 'none';
+  carregarEstoque();
+};
+window.editarEstoque = (id, descricao, categoria, disponivel) => {
+  document.getElementById('modalTituloEstoque').textContent = 'Editar Item de Estoque';
+  document.getElementById('estoqueId').value = id;
+  document.getElementById('estoqueDescricao').value = descricao;
+  document.getElementById('estoqueCategoria').value = categoria;
+  document.getElementById('estoqueDisponivel').value = disponivel;
+  modal.style.display = 'flex';
+};
+window.excluirEstoque = async (id) => {
+  if (confirm('Deseja excluir este item do estoque?')) {
+    await fetch(`/api/estoques/${id}`, {method:'DELETE'});
+    carregarEstoque();
+  }
+};
+</script>

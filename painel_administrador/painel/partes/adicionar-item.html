@@ -1,0 +1,73 @@
+<style>
+    .form-container {
+        background-color: white;
+        padding: 30px;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+        max-width: 700px;
+        margin: auto;
+    }
+    .form-container h3 {
+        margin-bottom: 25px;
+        font-weight: 700;
+        color: #333;
+    }
+    .form-grupo {
+        margin-bottom: 20px;
+    }
+    .form-grupo label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #555;
+    }
+    .form-grupo input,
+    .form-grupo select,
+    .form-grupo textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        font-size: 1em;
+        transition: border-color 0.2s;
+    }
+    .form-grupo input:focus,
+    .form-grupo select:focus,
+    .form-grupo textarea:focus {
+        outline: none;
+        border-color: var(--cor-destaque);
+    }
+    .form-grupo textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+</style>
+
+
+<div class="form-container">
+    <h3>Adicionar Item ao Estoque</h3>
+
+    <form id="form-adicionar-estoque">
+
+        <div class="form-grupo">
+            <label for="nome-item-estoque">Nome do Item</label>
+            <input type="text" id="nome-item-estoque" name="nome-item-estoque" placeholder="Ex: Saco de Carvão 5kg ou Espetinho de Alcatra" required>
+        </div>
+        <div class="form-grupo">
+            <label for="quantidade-adicionada">Quantidade Adicionada</label>
+            <input type="number" id="quantidade-adicionada" name="quantidade-adicionada" min="1" placeholder="Ex: 50" required>
+        </div>
+
+        <div class="form-grupo">
+            <label for="fornecedor">Fornecedor (Opcional)</label>
+            <input type="text" id="fornecedor" name="fornecedor" placeholder="Ex: Atacadão Dia a Dia">
+        </div>
+
+        <div class="form-grupo">
+            <label for="notas-estoque">Notas (Opcional)</label>
+            <textarea id="notas-estoque" name="notas-estoque" placeholder="Ex: Lote com validade para 12/2025"></textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-green">Registrar Entrada</button>
+    </form>
+</div>
