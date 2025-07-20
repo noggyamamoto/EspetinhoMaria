@@ -93,10 +93,8 @@ E assim para clientes, pedidos, estoque, administradores, etc.
 - O painel administrativo é protegido por login e sessão.
 - Recomenda-se alterar a senha padrão do administrador após o primeiro acesso.
 
-## Observações
-- O sistema pode ser facilmente adaptado para outros tipos de estabelecimentos.
-- Para produção, recomenda-se configurar variáveis de ambiente e HTTPS.
-
+## Documentação
+- Google Docs: https://docs.google.com/document/d/1cYrgBeXaAyYi1l8cf5gmNw3AqhaWKpzddq4zlPPcre8/edit?tab=t.0
 ---
 
 Desenvolvido com Node.js, Express e SQLite.
