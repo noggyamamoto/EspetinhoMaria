@@ -34,14 +34,65 @@ document.addEventListener('DOMContentLoaded', function() {
             const content = await response.text();
             console.log(`... Conteúdo recebido (tamanho: ${content.length} caracteres).`);
 
+            // =========================================================
+            // 🔧 CORREÇÃO: Remove scripts anteriores e executa novos sempre
+            // =========================================================
+            
+            // Remove scripts dinâmicos anteriores
+            const oldScripts = document.querySelectorAll('script[data-dynamic-page]');
+            oldScripts.forEach(script => script.remove());
+            
+            // Insere o conteúdo HTML
             contentBody.innerHTML = content;
-            console.log("✅ SUCESSO: Conteúdo inserido na página.");
+            
+            // Procura e executa todos os scripts da página carregada
+            const scripts = contentBody.querySelectorAll('script');
+            console.log(`... Encontrados ${scripts.length} scripts para executar`);
+            
+            scripts.forEach((script, index) => {
+                try {
+                    console.log(`... Executando script ${index + 1}/${scripts.length}`);
+                    
+                    if (script.src) {
+                        // Script externo
+                        const newScript = document.createElement('script');
+                        newScript.src = script.src;
+                        newScript.setAttribute('data-dynamic-page', pageName);
+                        newScript.onload = () => console.log(`✅ Script externo ${index + 1} carregado`);
+                        document.head.appendChild(newScript);
+                    } else {
+                        // Script inline - executa imediatamente
+                        console.log(`... Executando script inline ${index + 1}`);
+                        try {
+                            // Usa eval para executar no escopo global mantendo acesso a todas as variáveis
+                            eval(script.textContent);
+                            console.log(`✅ Script inline ${index + 1} executado com sucesso`);
+                        } catch (evalError) {
+                            console.error(`❌ Erro na execução do script inline ${index + 1}:`, evalError);
+                            console.log(`Conteúdo do script que falhou:`, script.textContent.substring(0, 200) + '...');
+                        }
+                    }
+                } catch (scriptError) {
+                    console.error(`❌ Erro ao processar script ${index + 1}:`, scriptError);
+                }
+            });
+            
+            console.log("✅ SUCESSO: Conteúdo inserido na página e scripts executados.");
 
         } catch (error) {
-            contentBody.innerHTML = `<p style="color: red;">Ocorreu um erro. Verifique o console (F12).</p>`;
+            contentBody.innerHTML = `<p style="color: red;">Erro ao carregar página: ${error.message}<br>Verifique o console (F12) para mais detalhes.</p>`;
             console.error("❌ ERRO no bloco catch:", error);
         }
     }
+
+    // Torna a função loadContent acessível globalmente
+    window.DashboardController = {
+        loadContent: loadContent,
+        contentBody: contentBody,
+        pageTitle: pageTitle
+    };
+    
+    console.log("✅ DashboardController criado e disponível globalmente");
 
     // --- Lógica do Menu Lateral (Acordeão) ---
     const navItemHeaders = document.querySelectorAll('.nav-item-header');
