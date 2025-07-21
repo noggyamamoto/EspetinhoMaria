@@ -82,14 +82,62 @@ form.onsubmit = async (e) => {
   const descricao = document.getElementById('estoqueDescricao').value;
   const categoria = document.getElementById('estoqueCategoria').value;
   const disponivel = document.getElementById('estoqueDisponivel').value;
-  const data_cadastro = new Date().toISOString().slice(0,10);
-  if (id) {
-    await fetch(`/api/estoques/${id}`, {method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({descricao,categoria,disponivel,data_cadastro})});
-  } else {
-    await fetch('/api/estoques', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({descricao,categoria,disponivel,data_cadastro})});
+  
+  // Validação de campos vazios
+  if (!descricao || !categoria) {
+    alert('❌ Erro: Todos os campos são obrigatórios!\n\nPor favor, preencha:\n- Descrição\n- Categoria');
+    return;
   }
-  modal.style.display = 'none';
-  carregarEstoque();
+  
+  // Validação de descrição
+  if (descricao.trim().length < 3) {
+    alert('❌ Erro: A descrição deve ter pelo menos 3 caracteres!');
+    return;
+  }
+  
+  try {
+    const data_cadastro = new Date().toISOString();
+    let response;
+    
+    if (id) {
+      // Editando item existente
+      response = await fetch(`/api/estoques/${id}`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          descricao: descricao.trim(),
+          categoria: categoria.trim(),
+          disponivel: parseInt(disponivel),
+          data_cadastro
+        })
+      });
+    } else {
+      // Criando novo item
+      response = await fetch('/api/estoques', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({
+          descricao: descricao.trim(),
+          categoria: categoria.trim(),
+          disponivel: parseInt(disponivel),
+          data_cadastro
+        })
+      });
+    }
+    
+    if (response.ok) {
+      const resultado = await response.json();
+      alert(id ? '✅ Item de estoque editado com sucesso!' : '✅ Item de estoque cadastrado com sucesso!');
+      modal.style.display = 'none';
+      carregarEstoque(); // Atualiza a lista
+    } else {
+      const erro = await response.json();
+      alert('❌ Erro ao salvar item: ' + (erro.erro || 'Erro desconhecido'));
+    }
+  } catch (error) {
+    console.error('Erro na requisição:', error);
+    alert('❌ Erro de conexão. Verifique se o servidor está rodando.');
+  }
 };
 window.editarEstoque = (id, descricao, categoria, disponivel) => {
   document.getElementById('modalTituloEstoque').textContent = 'Editar Item de Estoque';
