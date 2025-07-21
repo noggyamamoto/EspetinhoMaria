@@ -10,6 +10,18 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 
+// Adicionar headers CORS para evitar problemas de cross-origin
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
+    if (req.method === 'OPTIONS') {
+        res.sendStatus(200);
+    } else {
+        next();
+    }
+});
+
 // Servir arquivos estáticos da home
 app.use('/', express.static(path.join(__dirname, 'home')));
 
@@ -109,6 +121,125 @@ app.use('/painel-administrador/painel', authMiddleware, express.static(path.join
 app.get('/logout', (req, res) => {
   res.clearCookie('auth');
   res.redirect('/painel-administrador/login.html');
+});
+
+// Rotas para pedidos (API REST)
+// Listar todos os pedidos
+app.get('/api/pedidos', (req, res) => {
+  db.all(`SELECT p.*, c.nome as nome_cliente, c.telefone 
+          FROM Pedido p
+          LEFT JOIN Cliente c ON p.id_cliente = c.id_cliente
+          ORDER BY p.dataHora DESC`, [], (err, rows) => {
+    if (err) return res.status(500).json({ erro: 'Erro ao buscar pedidos.' });
+    res.json(rows);
+  });
+});
+
+// Criar novo pedido (versão simplificada)
+app.post('/api/pedidos', (req, res) => {
+  const { cliente, telefone, itens, valor_total } = req.body;
+  const dataHora = new Date().toISOString();
+
+  console.log('📝 Criando novo pedido:', { cliente, telefone, valor_total });
+
+  // Versão simplificada - apenas cria o pedido com dados mínimos
+  // Primeiro verifica se existe tabela Cliente, se não cria uma entrada simples
+  db.run(
+    'INSERT OR IGNORE INTO Cliente (nome, telefone) VALUES (?, ?)',
+    [cliente, telefone],
+    function (clienteErr) {
+      if (clienteErr) {
+        console.log('⚠️ Aviso ao criar/verificar cliente:', clienteErr);
+      }
+
+      // Busca o ID do cliente
+      db.get('SELECT id_cliente FROM Cliente WHERE telefone = ?', [telefone], (err, clienteData) => {
+        let id_cliente = clienteData ? clienteData.id_cliente : 1; // Fallback para ID 1
+
+        // Tenta criar pedido com estrutura atual da tabela
+        db.run(
+          'INSERT INTO Pedido (dataHora, valor_total, id_cliente) VALUES (?, ?, ?)',
+          [dataHora, valor_total, id_cliente],
+          function (err) {
+            if (err) {
+              console.error('❌ Erro detalhado ao criar pedido:', err);
+              
+              // Fallback: tenta sem id_cliente se não existir a coluna
+              db.run(
+                'INSERT INTO Pedido (dataHora, valor_total) VALUES (?, ?)',
+                [dataHora, valor_total],
+                function (err2) {
+                  if (err2) {
+                    console.error('❌ Erro final ao criar pedido:', err2);
+                    return res.status(500).json({ erro: 'Erro ao criar pedido - estrutura da tabela incompatível.' });
+                  }
+
+                  const id_pedido = this.lastID;
+                  console.log('✅ Pedido criado com ID (fallback):', id_pedido);
+
+                  res.status(201).json({
+                    id_pedido,
+                    dataHora,
+                    valor_total,
+                    mensagem: 'Pedido criado com sucesso!'
+                  });
+                }
+              );
+            } else {
+              const id_pedido = this.lastID;
+              console.log('✅ Pedido criado com ID:', id_pedido);
+
+              res.status(201).json({
+                id_pedido,
+                dataHora,
+                valor_total,
+                id_cliente,
+                mensagem: 'Pedido criado com sucesso!'
+              });
+            }
+          }
+        );
+      });
+    }
+  );
+});
+
+// Endpoint para estatísticas do dashboard
+app.get('/api/estatisticas', (req, res) => {
+  try {
+    // Data de 24 horas atrás
+    const vinteQuatroHorasAtras = new Date();
+    vinteQuatroHorasAtras.setHours(vinteQuatroHorasAtras.getHours() - 24);
+    const dataISOString = vinteQuatroHorasAtras.toISOString();
+    
+    console.log('📊 Calculando estatísticas desde:', dataISOString);
+    
+    // Query para contar pedidos das últimas 24h
+    db.get(
+      `SELECT COUNT(*) as pedidos_24h, COALESCE(SUM(valor_total), 0) as faturamento_24h
+       FROM Pedido 
+       WHERE dataHora >= ?`,
+      [dataISOString],
+      (err, row) => {
+        if (err) {
+          console.error('❌ Erro ao buscar estatísticas:', err);
+          return res.status(500).json({ erro: 'Erro ao calcular estatísticas.' });
+        }
+        
+        const estatisticas = {
+          pedidos_24h: row.pedidos_24h || 0,
+          faturamento_24h: row.faturamento_24h || 0,
+          ultima_atualizacao: new Date().toISOString()
+        };
+        
+        console.log('✅ Estatísticas calculadas:', estatisticas);
+        res.json(estatisticas);
+      }
+    );
+  } catch (error) {
+    console.error('❌ Erro no endpoint de estatísticas:', error);
+    res.status(500).json({ erro: 'Erro interno do servidor.' });
+  }
 });
 
 app.listen(PORT, () => {
