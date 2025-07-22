@@ -7,8 +7,11 @@
         <thead>
             <tr>
                 <th>ID</th>
+                <th>Nome</th>
+                <th>Categoria</th>
+                <th>Descrição</th>
                 <th>Preço</th>
-                <th>ID Estoque</th>
+                <th>Disponível</th>
                 <th>Ações</th>
             </tr>
         </thead>
@@ -22,38 +25,76 @@
     <h4 id="modalTitulo">Novo Produto</h4>
     <input type="hidden" id="produtoId">
     <div style="margin-bottom:10px;">
+      <label>Nome do Produto:</label>
+      <input type="text" id="produtoNome" required>
+    </div>
+    <div style="margin-bottom:10px;">
+      <label>Descrição (opcional):</label>
+      <input type="text" id="produtoDescricao">
+    </div>
+    <div style="margin-bottom:10px;">
+      <label>Categoria:</label>
+      <select id="produtoCategoria" required>
+        <option value="">Selecione uma categoria</option>
+        <option value="1">ESPETOS</option>
+        <option value="2">BEBIDAS</option>
+        <option value="3">INSUMOS</option>
+      </select>
+    </div>
+    <div style="margin-bottom:10px;">
       <label>Preço:</label>
       <input type="number" step="0.01" id="produtoPreco" required>
     </div>
     <div style="margin-bottom:10px;">
-      <label>ID Estoque:</label>
-      <input type="number" id="produtoEstoque" required>
+      <label>Disponível:</label>
+      <select id="produtoDisponivel">
+        <option value="1">Sim</option>
+        <option value="0">Não</option>
+      </select>
     </div>
     <button type="submit" class="btn btn-green">Salvar</button>
     <button type="button" class="btn btn-red" id="btnFecharModal">Cancelar</button>
   </form>
 </div>
 <script>
-async function carregarProdutos() {
+// Função global para carregar produtos
+window.carregarProdutos = async function() {
   const tbody = document.getElementById('produtos-tbody');
-  tbody.innerHTML = '<tr><td colspan="4">Carregando...</td></tr>';
-  const res = await fetch('/api/produtos');
-  const produtos = await res.json();
-  tbody.innerHTML = '';
-  produtos.forEach(prod => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${prod.id_produto}</td>
-      <td>R$ ${Number(prod.preco_unitario).toFixed(2)}</td>
-      <td>${prod.id_estoque}</td>
-      <td>
-        <button class='btn btn-blue' onclick='editarProduto(${prod.id_produto},${prod.preco_unitario},${prod.id_estoque})'>Editar</button>
-        <button class='btn btn-red' onclick='excluirProduto(${prod.id_produto})'>Excluir</button>
-      </td>
-    `;
-    tbody.appendChild(tr);
-  });
-}
+  tbody.innerHTML = '<tr><td colspan="6">Carregando...</td></tr>';
+  
+  try {
+    const res = await fetch('/api/produtos');
+    if (!res.ok) {
+      throw new Error(`Erro HTTP: ${res.status}`);
+    }
+    
+    const produtos = await res.json();
+    tbody.innerHTML = '';
+    
+    produtos.forEach(prod => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td>${prod.id_produto}</td>
+        <td>${prod.nome}</td>
+        <td>${prod.categoria}</td>
+        <td>${prod.descricao || 'Sem descrição'}</td>
+        <td>R$ ${Number(prod.preco_unitario).toFixed(2)}</td>
+        <td>${prod.disponivel}</td>
+        <td>
+          <button class='btn btn-blue' onclick='editarProduto(${prod.id_produto},"${prod.nome}","${prod.descricao || ''}","${prod.categoria}",${prod.preco_unitario},${prod.disponivel === 'Sim' ? 1 : 0},${prod.id_categoria})'>Editar</button>
+          <button class='btn btn-red' onclick='excluirProduto(${prod.id_produto})'>Excluir</button>
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+    
+    console.log(`✅ ${produtos.length} produtos carregados`);
+    
+  } catch (error) {
+    console.error('❌ Erro ao carregar produtos:', error);
+    tbody.innerHTML = '<tr><td colspan="7" style="color: red;">Erro ao carregar produtos. Verifique o console.</td></tr>';
+  }
+};
 carregarProdutos();
 
 // Modal
@@ -71,27 +112,93 @@ btnFechar.onclick = () => modal.style.display = 'none';
 form.onsubmit = async (e) => {
   e.preventDefault();
   const id = document.getElementById('produtoId').value;
+  const nome = document.getElementById('produtoNome').value;
+  const descricao = document.getElementById('produtoDescricao').value;
+  const id_categoria = document.getElementById('produtoCategoria').value;
   const preco = document.getElementById('produtoPreco').value;
-  const estoque = document.getElementById('produtoEstoque').value;
-  if (id) {
-    await fetch(`/api/produtos/${id}`, {method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify({preco_unitario:preco,id_estoque:estoque})});
-  } else {
-    await fetch('/api/produtos', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({preco_unitario:preco,id_estoque:estoque})});
+  const disponivel = document.getElementById('produtoDisponivel').value;
+  
+  // Validações
+  if (!nome || nome.trim().length < 2) {
+    alert('❌ O nome deve ter pelo menos 2 caracteres!');
+    return;
   }
-  modal.style.display = 'none';
-  carregarProdutos();
+  
+  if (!id_categoria) {
+    alert('❌ Selecione uma categoria!');
+    return;
+  }
+  
+  if (!preco || parseFloat(preco) <= 0) {
+    alert('❌ O preço deve ser maior que zero!');
+    return;
+  }
+  
+  try {
+    let response;
+    const dados = {
+      nome: nome.trim(),
+      descricao: descricao ? descricao.trim() : '',
+      id_categoria: parseInt(id_categoria),
+      preco_unitario: parseFloat(preco),
+      disponivel: parseInt(disponivel)
+    };
+    
+    if (id) {
+      // Editando produto existente
+      response = await fetch(`/api/produtos/${id}`, {
+        method: 'PUT',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(dados)
+      });
+    } else {
+      // Criando novo produto
+      response = await fetch('/api/produtos', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(dados)
+      });
+    }
+    
+    if (response.ok) {
+      const resultado = await response.json();
+      alert(id ? '✅ Produto editado com sucesso!' : '✅ Produto cadastrado com sucesso!');
+      modal.style.display = 'none';
+      window.carregarProdutos();
+    } else {
+      const erro = await response.json();
+      alert('❌ Erro ao salvar produto: ' + (erro.erro || 'Erro desconhecido'));
+    }
+  } catch (error) {
+    console.error('Erro na requisição:', error);
+    alert('❌ Erro de conexão. Verifique se o servidor está rodando.');
+  }
 };
-window.editarProduto = (id, preco, estoque) => {
+window.editarProduto = (id, nome, descricao, categoria, preco, disponivel, id_categoria) => {
   document.getElementById('modalTitulo').textContent = 'Editar Produto';
   document.getElementById('produtoId').value = id;
+  document.getElementById('produtoNome').value = nome;
+  document.getElementById('produtoDescricao').value = descricao;
+  document.getElementById('produtoCategoria').value = id_categoria;
   document.getElementById('produtoPreco').value = preco;
-  document.getElementById('produtoEstoque').value = estoque;
+  document.getElementById('produtoDisponivel').value = disponivel;
   modal.style.display = 'flex';
 };
 window.excluirProduto = async (id) => {
   if (confirm('Deseja excluir este produto?')) {
-    await fetch(`/api/produtos/${id}`, {method:'DELETE'});
-    carregarProdutos();
+    try {
+      const response = await fetch(`/api/produtos/${id}`, {method:'DELETE'});
+      if (response.ok) {
+        alert('✅ Produto excluído com sucesso!');
+        window.carregarProdutos();
+      } else {
+        const erro = await response.json();
+        alert('❌ Erro ao excluir produto: ' + (erro.erro || 'Erro desconhecido'));
+      }
+    } catch (error) {
+      console.error('Erro ao excluir produto:', error);
+      alert('❌ Erro de conexão. Verifique se o servidor está rodando.');
+    }
   }
 };
 </script>
