@@ -1,6 +1,15 @@
 // Teste "Canário": Se esta mensagem aparecer no console, o arquivo foi carregado.
 console.log("✅ main.js foi carregado e está executando!");
 
+// Carrega funções globais se não estiverem disponíveis
+if (!window.PainelAdmin) {
+    console.log("📦 Carregando funções globais...");
+    const script = document.createElement('script');
+    script.src = 'js/global-functions.js';
+    script.onload = () => console.log("✅ Funções globais carregadas");
+    document.head.appendChild(script);
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log("✅ Evento DOMContentLoaded disparado. O HTML está pronto.");
 

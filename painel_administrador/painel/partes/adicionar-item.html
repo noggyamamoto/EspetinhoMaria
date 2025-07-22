@@ -54,8 +54,13 @@
             <input type="text" id="nome-item-estoque" name="nome-item-estoque" placeholder="Ex: Saco de Carvão 5kg ou Espetinho de Alcatra" required>
         </div>
         <div class="form-grupo">
-            <label for="quantidade-adicionada">Quantidade Adicionada</label>
-            <input type="number" id="quantidade-adicionada" name="quantidade-adicionada" min="1" placeholder="Ex: 50" required>
+            <label for="categoria-item-estoque">Categoria</label>
+            <select id="categoria-item-estoque" name="categoria-item-estoque" required>
+                <option value="" disabled selected>Selecione uma categoria</option>
+                <option value="1">ESPETOS</option>
+                <option value="2">BEBIDAS</option>
+                <option value="3">INSUMOS</option>
+            </select>
         </div>
 
         <div class="form-grupo">
@@ -71,3 +76,76 @@
         <button type="submit" class="btn btn-green">Registrar Entrada</button>
     </form>
 </div>
+
+<script>
+// Função global para adicionar item ao estoque
+window.PainelAdmin = window.PainelAdmin || {};
+
+window.PainelAdmin.adicionarItemEstoque = async function(formData) {
+    try {
+        const response = await fetch('/api/estoques', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        if (response.ok) {
+            const resultado = await response.json();
+            window.PainelAdmin.exibirMensagem('Item adicionado ao estoque com sucesso!', 'sucesso');
+            document.getElementById('form-adicionar-estoque').reset();
+            return resultado;
+        } else {
+            const erro = await response.json();
+            throw new Error(erro.erro || 'Erro ao adicionar item ao estoque');
+        }
+    } catch (error) {
+        console.error('❌ Erro ao adicionar item ao estoque:', error);
+        window.PainelAdmin.exibirMensagem('Erro ao adicionar item: ' + error.message, 'erro');
+        throw error;
+    }
+};
+
+// Configuração do formulário
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('form-adicionar-estoque');
+    
+    // Carrega categorias no select quando disponível
+    if (window.PainelAdmin && window.PainelAdmin.popularSelectCategorias) {
+        window.PainelAdmin.popularSelectCategorias('categoria-item-estoque');
+    }
+    
+    if (form) {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Coleta dados do formulário
+            const formData = {
+                descricao: document.getElementById('nome-item-estoque').value.trim(),
+                id_categoria: parseInt(document.getElementById('categoria-item-estoque').value),
+                fornecedor: document.getElementById('fornecedor').value.trim(),
+                notas: document.getElementById('notas-estoque').value.trim(),
+                disponivel: 1 // Sempre disponível ao adicionar
+            };
+            
+            // Validações
+            if (!window.PainelAdmin.validarString(formData.descricao, 3)) {
+                window.PainelAdmin.exibirMensagem('O nome do item deve ter pelo menos 3 caracteres!', 'erro');
+                return;
+            }
+            
+            if (!formData.id_categoria || ![1, 2, 3].includes(formData.id_categoria)) {
+                window.PainelAdmin.exibirMensagem('Selecione uma categoria válida!', 'erro');
+                return;
+            }
+            
+            // Adiciona o item ao estoque
+            await window.PainelAdmin.adicionarItemEstoque(formData);
+        });
+    }
+});
+
+// Compatibilidade com chamadas diretas
+window.adicionarItemEstoque = window.PainelAdmin.adicionarItemEstoque;
+</script>

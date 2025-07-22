@@ -7,8 +7,8 @@
         <thead>
             <tr>
                 <th>ID</th>
-                <th>Descrição</th>
                 <th>Categoria</th>
+                <th>Descrição</th>
                 <th>Data Cadastro</th>
                 <th>Disponível</th>
                 <th>Ações</th>
@@ -29,7 +29,11 @@
     </div>
     <div style="margin-bottom:10px;">
       <label>Categoria:</label>
-      <input type="text" id="estoqueCategoria" required>
+      <select id="estoqueCategoria" required>
+        <option value="1">ESPETOS</option>
+        <option value="2">BEBIDAS</option>
+        <option value="3">INSUMOS</option>
+      </select>
     </div>
     <div style="margin-bottom:10px;">
       <label>Disponível:</label>
@@ -40,7 +44,8 @@
   </form>
 </div>
 <script>
-async function carregarEstoque() {
+// Função global para carregar estoque
+window.carregarEstoque = async function() {
   const tbody = document.getElementById('estoque-tbody');
   tbody.innerHTML = '<tr><td colspan="6">Carregando...</td></tr>';
   const res = await fetch('/api/estoques');
@@ -48,11 +53,15 @@ async function carregarEstoque() {
   tbody.innerHTML = '';
   estoques.forEach(e => {
     const tr = document.createElement('tr');
+    const dataFormatada = window.PainelAdmin ? 
+      window.PainelAdmin.formatarDataRelativa(e.data_cadastro) : 
+      e.data_cadastro;
+    
     tr.innerHTML = `
       <td>${e.id_estoque}</td>
-      <td>${e.descricao}</td>
       <td>${e.categoria}</td>
-      <td>${e.data_cadastro}</td>
+      <td>${e.descricao}</td>
+      <td title="${e.data_cadastro}">${dataFormatada}</td>
       <td>${e.disponivel ? 'Sim' : 'Não'}</td>
       <td>
         <button class='btn btn-blue' onclick='editarEstoque(${e.id_estoque},"${e.descricao}","${e.categoria}",${e.disponivel})'>Editar</button>
@@ -61,8 +70,8 @@ async function carregarEstoque() {
     `;
     tbody.appendChild(tr);
   });
-}
-carregarEstoque();
+};
+window.carregarEstoque();
 
 // Modal
 const modal = document.getElementById('modalEstoque');
@@ -80,11 +89,11 @@ form.onsubmit = async (e) => {
   e.preventDefault();
   const id = document.getElementById('estoqueId').value;
   const descricao = document.getElementById('estoqueDescricao').value;
-  const categoria = document.getElementById('estoqueCategoria').value;
+  const id_categoria = document.getElementById('estoqueCategoria').value;
   const disponivel = document.getElementById('estoqueDisponivel').value;
   
   // Validação de campos vazios
-  if (!descricao || !categoria) {
+  if (!descricao || !id_categoria) {
     alert('❌ Erro: Todos os campos são obrigatórios!\n\nPor favor, preencha:\n- Descrição\n- Categoria');
     return;
   }
@@ -106,7 +115,7 @@ form.onsubmit = async (e) => {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
           descricao: descricao.trim(),
-          categoria: categoria.trim(),
+          id_categoria: parseInt(id_categoria),
           disponivel: parseInt(disponivel),
           data_cadastro
         })
@@ -118,7 +127,7 @@ form.onsubmit = async (e) => {
         headers: {'Content-Type': 'application/json'},
         body: JSON.stringify({
           descricao: descricao.trim(),
-          categoria: categoria.trim(),
+          id_categoria: parseInt(id_categoria),
           disponivel: parseInt(disponivel),
           data_cadastro
         })
@@ -129,7 +138,7 @@ form.onsubmit = async (e) => {
       const resultado = await response.json();
       alert(id ? '✅ Item de estoque editado com sucesso!' : '✅ Item de estoque cadastrado com sucesso!');
       modal.style.display = 'none';
-      carregarEstoque(); // Atualiza a lista
+      window.carregarEstoque(); // Atualiza a lista
     } else {
       const erro = await response.json();
       alert('❌ Erro ao salvar item: ' + (erro.erro || 'Erro desconhecido'));
@@ -143,14 +152,20 @@ window.editarEstoque = (id, descricao, categoria, disponivel) => {
   document.getElementById('modalTituloEstoque').textContent = 'Editar Item de Estoque';
   document.getElementById('estoqueId').value = id;
   document.getElementById('estoqueDescricao').value = descricao;
-  document.getElementById('estoqueCategoria').value = categoria;
+  
+  // Converter nome da categoria para ID
+  let id_categoria = 3; // Default para INSUMOS
+  if (categoria === 'ESPETOS') id_categoria = 1;
+  else if (categoria === 'BEBIDAS') id_categoria = 2;
+  
+  document.getElementById('estoqueCategoria').value = id_categoria;
   document.getElementById('estoqueDisponivel').value = disponivel;
   modal.style.display = 'flex';
 };
 window.excluirEstoque = async (id) => {
   if (confirm('Deseja excluir este item do estoque?')) {
     await fetch(`/api/estoques/${id}`, {method:'DELETE'});
-    carregarEstoque();
+    window.carregarEstoque();
   }
 };
 </script>
