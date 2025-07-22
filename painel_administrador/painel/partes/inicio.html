@@ -44,8 +44,8 @@
 // Script para carregar dados dinâmicos da página inicial
 console.log('🏠 Inicializando página de dashboard...');
 
-// Função para carregar estatísticas em tempo real
-async function carregarEstatisticas() {
+// Função global para carregar estatísticas em tempo real
+window.carregarEstatisticas = async function() {
     try {
         console.log('📊 Carregando estatísticas do servidor...');
         
@@ -68,7 +68,7 @@ async function carregarEstatisticas() {
         // Atualiza total faturado das últimas 24h
         const totalFaturadoElement = document.getElementById('total-faturado');
         if (totalFaturadoElement) {
-            const valorFormatado = formatarMoeda(stats.faturamento_24h || 0);
+            const valorFormatado = window.formatarMoeda(stats.faturamento_24h || 0);
             totalFaturadoElement.textContent = valorFormatado;
         }
         
@@ -91,10 +91,10 @@ async function carregarEstatisticas() {
             totalFaturadoElement.title = 'Erro ao carregar dados';
         }
     }
-}
+};
 
-// Função utilitária para formatar valores monetários
-function formatarMoeda(valor) {
+// Função global utilitária para formatar valores monetários
+window.formatarMoeda = function(valor) {
     return new Intl.NumberFormat('pt-BR', {
         style: 'currency',
         currency: 'BRL'
@@ -106,10 +106,10 @@ function formatarMoeda(valor) {
     console.log('🚀 Configurando dashboard inicial...');
     
     // Carrega estatísticas imediatamente
-    carregarEstatisticas();
+    window.carregarEstatisticas();
     
     // Recarrega estatísticas a cada 30 segundos para manter dados atualizados
-    setInterval(carregarEstatisticas, 30000);
+    setInterval(window.carregarEstatisticas, 30000);
     
     console.log('✅ Dashboard configurado com atualização automática');
 })();

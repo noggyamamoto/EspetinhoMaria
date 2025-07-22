@@ -57,9 +57,9 @@
             <label for="categoria-produto">Categoria</label>
             <select id="categoria-produto" name="categoria-produto" required>
                 <option value="" disabled selected>Selecione uma categoria</option>
-                <option value="carnes">Carnes</option>
-                <option value="bebidas">Bebidas</option>
-                <option value="acompanhamentos">Acompanhamentos</option>
+                <option value="1">ESPETOS</option>
+                <option value="2">BEBIDAS</option>
+                <option value="3">INSUMOS</option>
             </select>
         </div>
 
@@ -81,3 +81,75 @@
         <button type="submit" class="btn btn-green">Salvar Produto</button>
     </form>
 </div>
+
+<script>
+// Função global para cadastrar produto
+window.PainelAdmin = window.PainelAdmin || {};
+
+window.PainelAdmin.cadastrarProduto = async function(formData) {
+    try {
+        const response = await fetch('/api/produtos', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        if (response.ok) {
+            const resultado = await response.json();
+            window.PainelAdmin.exibirMensagem('Produto cadastrado com sucesso!', 'sucesso');
+            document.getElementById('form-produto').reset();
+            return resultado;
+        } else {
+            const erro = await response.json();
+            throw new Error(erro.erro || 'Erro ao cadastrar produto');
+        }
+    } catch (error) {
+        console.error('❌ Erro ao cadastrar produto:', error);
+        window.PainelAdmin.exibirMensagem('Erro ao cadastrar produto: ' + error.message, 'erro');
+        throw error;
+    }
+};
+
+// Configuração do formulário
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('form-produto');
+    
+    if (form) {
+        form.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Coleta dados do formulário
+            const formData = {
+                descricao: document.getElementById('nome-produto').value.trim(),
+                id_categoria: parseInt(document.getElementById('categoria-produto').value),
+                preco_unitario: parseFloat(document.getElementById('preco-produto').value),
+                disponivel: 1 // Sempre disponível ao cadastrar
+            };
+            
+            // Validações
+            if (!window.PainelAdmin.validarString(formData.descricao, 3)) {
+                window.PainelAdmin.exibirMensagem('O nome do produto deve ter pelo menos 3 caracteres!', 'erro');
+                return;
+            }
+            
+            if (!formData.id_categoria || ![1, 2, 3].includes(formData.id_categoria)) {
+                window.PainelAdmin.exibirMensagem('Selecione uma categoria válida!', 'erro');
+                return;
+            }
+            
+            if (!window.PainelAdmin.validarNumero(formData.preco_unitario, 0.01)) {
+                window.PainelAdmin.exibirMensagem('O preço deve ser um valor válido maior que zero!', 'erro');
+                return;
+            }
+            
+            // Cadastra o produto
+            await window.PainelAdmin.cadastrarProduto(formData);
+        });
+    }
+});
+
+// Compatibilidade com chamadas diretas
+window.cadastrarProduto = window.PainelAdmin.cadastrarProduto;
+</script>
