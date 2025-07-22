@@ -37,33 +37,95 @@ function authMiddleware(req, res, next) {
 }
 
 // Rotas para produtos e estoque (API REST)
-// Listar todos os produtos com informações do estoque
+// Listar todos os produtos com informações do estoque e categoria
 app.get('/api/produtos', (req, res) => {
-  db.all(`SELECT p.id_produto, p.preco_unitario, e.id_estoque, e.descricao, e.categoria, e.disponivel
+  db.all(`SELECT p.id_produto, p.nome, p.descricao, p.preco_unitario, 
+                 c.nome as categoria, e.disponivel, 
+                 e.data_cadastro, e.id_categoria
           FROM Produto p
           JOIN Estoque e ON p.id_estoque = e.id_estoque
-          ORDER BY p.id_produto`, [], (err, rows) => {
-    if (err) return res.status(500).json({ erro: 'Erro ao buscar produtos.' });
-    res.json(rows);
+          JOIN Categoria c ON e.id_categoria = c.id_categoria
+          ORDER BY e.data_cadastro DESC`, [], (err, rows) => {
+    if (err) {
+      console.error('❌ Erro ao buscar produtos:', err);
+      return res.status(500).json({ erro: 'Erro ao buscar produtos.' });
+    }
+    
+    // Formata os dados dos produtos
+    const produtos = rows.map(row => ({
+      id_produto: row.id_produto,
+      nome: row.nome,
+      descricao: row.descricao,
+      preco_unitario: row.preco_unitario,
+      categoria: row.categoria,
+      disponivel: row.disponivel ? 'Sim' : 'Não',
+      id_categoria: row.id_categoria,
+      data_cadastro: row.data_cadastro
+    }));
+    
+    console.log(`✅ ${produtos.length} produtos encontrados`);
+    res.json(produtos);
   });
 });
 
 // Adicionar novo produto
 app.post('/api/produtos', (req, res) => {
-  const { preco_unitario, descricao, categoria, disponivel } = req.body;
+  const { nome, descricao, preco_unitario, id_categoria, disponivel } = req.body;
   const data_cadastro = new Date().toISOString();
+  
+  console.log('📦 Criando novo produto:', { nome, descricao, preco_unitario, id_categoria, disponivel });
+  
+  // Validações
+  if (!nome || nome.trim().length < 2) {
+    return res.status(400).json({ erro: 'Nome deve ter pelo menos 2 caracteres.' });
+  }
+  
+  if (!preco_unitario || preco_unitario <= 0) {
+    return res.status(400).json({ erro: 'Preço deve ser um valor válido maior que zero.' });
+  }
+  
+  if (!id_categoria || ![1, 2, 3].includes(parseInt(id_categoria))) {
+    return res.status(400).json({ erro: 'Categoria inválida. Use: 1=ESPETOS, 2=BEBIDAS, 3=INSUMOS.' });
+  }
+  
+  const disponivelInt = disponivel ? 1 : 0;
+  
+  // Primeiro cria o item no estoque
   db.run(
-    'INSERT INTO Estoque (descricao, categoria, data_cadastro, disponivel) VALUES (?, ?, ?, ?)',
-    [descricao, categoria, data_cadastro, disponivel ? 1 : 0],
+    'INSERT INTO Estoque (descricao, id_categoria, data_cadastro, disponivel) VALUES (?, ?, ?, ?)',
+    [nome.trim(), parseInt(id_categoria), data_cadastro, disponivelInt],
     function (err) {
-      if (err) return res.status(500).json({ erro: 'Erro ao adicionar estoque.' });
+      if (err) {
+        console.error('❌ Erro ao adicionar estoque:', err);
+        return res.status(500).json({ erro: 'Erro ao adicionar estoque.' });
+      }
+      
       const id_estoque = this.lastID;
+      console.log('✅ Estoque criado com ID:', id_estoque);
+      
+      // Depois cria o produto vinculado ao estoque
       db.run(
-        'INSERT INTO Produto (preco_unitario, id_estoque) VALUES (?, ?)',
-        [preco_unitario, id_estoque],
+        'INSERT INTO Produto (nome, descricao, preco_unitario, id_estoque) VALUES (?, ?, ?, ?)',
+        [nome.trim(), descricao ? descricao.trim() : '', parseFloat(preco_unitario), id_estoque],
         function (err2) {
-          if (err2) return res.status(500).json({ erro: 'Erro ao adicionar produto.' });
-          res.status(201).json({ id_produto: this.lastID, preco_unitario, id_estoque });
+          if (err2) {
+            console.error('❌ Erro ao adicionar produto:', err2);
+            return res.status(500).json({ erro: 'Erro ao adicionar produto.' });
+          }
+          
+          const id_produto = this.lastID;
+          console.log('✅ Produto criado com ID:', id_produto);
+          
+          res.status(201).json({ 
+            id_produto, 
+            nome: nome.trim(),
+            descricao: descricao ? descricao.trim() : '',
+            preco_unitario: parseFloat(preco_unitario), 
+            id_estoque,
+            id_categoria: parseInt(id_categoria),
+            disponivel: disponivelInt,
+            mensagem: 'Produto criado com sucesso!'
+          });
         }
       );
     }
@@ -73,15 +135,52 @@ app.post('/api/produtos', (req, res) => {
 // Editar produto
 app.put('/api/produtos/:id', (req, res) => {
   const { id } = req.params;
-  const { preco_unitario, descricao, categoria, disponivel } = req.body;
+  const { preco_unitario, descricao, id_categoria, disponivel } = req.body;
+  
+  console.log('📝 Editando produto ID:', id, { preco_unitario, descricao, id_categoria, disponivel });
+  
+  // Validações
+  if (!preco_unitario || preco_unitario <= 0) {
+    return res.status(400).json({ erro: 'Preço deve ser um valor válido maior que zero.' });
+  }
+  
+  if (!descricao || descricao.trim().length < 3) {
+    return res.status(400).json({ erro: 'Descrição deve ter pelo menos 3 caracteres.' });
+  }
+  
+  if (!id_categoria || ![1, 2, 3].includes(parseInt(id_categoria))) {
+    return res.status(400).json({ erro: 'Categoria inválida. Use: 1=ESPETOS, 2=BEBIDAS, 3=INSUMOS.' });
+  }
+  
+  // Busca o id_estoque do produto
   db.get('SELECT id_estoque FROM Produto WHERE id_produto = ?', [id], (err, row) => {
-    if (err || !row) return res.status(404).json({ erro: 'Produto não encontrado.' });
+    if (err || !row) {
+      console.error('❌ Produto não encontrado:', err);
+      return res.status(404).json({ erro: 'Produto não encontrado.' });
+    }
+    
     const id_estoque = row.id_estoque;
-    db.run('UPDATE Produto SET preco_unitario = ? WHERE id_produto = ?', [preco_unitario, id], function (err2) {
-      if (err2) return res.status(500).json({ erro: 'Erro ao editar produto.' });
-      db.run('UPDATE Estoque SET descricao = ?, categoria = ?, disponivel = ? WHERE id_estoque = ?', [descricao, categoria, disponivel ? 1 : 0, id_estoque], function (err3) {
-        if (err3) return res.status(500).json({ erro: 'Erro ao editar estoque.' });
-        res.json({ sucesso: true });
+    
+    // Atualiza o preço do produto
+    db.run('UPDATE Produto SET preco_unitario = ? WHERE id_produto = ?', [parseFloat(preco_unitario), id], function (err2) {
+      if (err2) {
+        console.error('❌ Erro ao editar produto:', err2);
+        return res.status(500).json({ erro: 'Erro ao editar produto.' });
+      }
+      
+      // Atualiza as informações do estoque
+      db.run('UPDATE Estoque SET descricao = ?, id_categoria = ?, disponivel = ? WHERE id_estoque = ?', 
+        [descricao.trim(), parseInt(id_categoria), disponivel ? 1 : 0, id_estoque], function (err3) {
+        if (err3) {
+          console.error('❌ Erro ao editar estoque:', err3);
+          return res.status(500).json({ erro: 'Erro ao editar estoque.' });
+        }
+        
+        console.log('✅ Produto editado com sucesso');
+        res.json({ 
+          sucesso: true,
+          mensagem: 'Produto editado com sucesso!'
+        });
       });
     });
   });
@@ -98,6 +197,160 @@ app.delete('/api/produtos/:id', (req, res) => {
       db.run('DELETE FROM Estoque WHERE id_estoque = ?', [id_estoque], function (err3) {
         if (err3) return res.status(500).json({ erro: 'Erro ao remover estoque.' });
         res.json({ sucesso: true });
+      });
+    });
+  });
+});
+
+// =====================================================
+// ROTAS PARA GERENCIAMENTO DE CATEGORIAS (API REST)
+// =====================================================
+
+// Listar todas as categorias disponíveis
+app.get('/api/categorias', (req, res) => {
+  db.all(`SELECT id_categoria, nome, descricao FROM Categoria ORDER BY id_categoria`, [], (err, rows) => {
+    if (err) {
+      console.error('❌ Erro ao buscar categorias:', err);
+      return res.status(500).json({ erro: 'Erro ao buscar categorias.' });
+    }
+    res.json(rows);
+  });
+});
+
+// =====================================================
+// ROTAS PARA GERENCIAMENTO DE ESTOQUE (API REST)
+// =====================================================
+
+// Listar todos os itens do estoque com informações da categoria
+app.get('/api/estoques', (req, res) => {
+  db.all(`SELECT e.id_estoque, e.descricao, c.nome as categoria, e.data_cadastro, e.disponivel, e.id_categoria
+          FROM Estoque e
+          JOIN Categoria c ON e.id_categoria = c.id_categoria
+          ORDER BY e.data_cadastro DESC`, [], (err, rows) => {
+    if (err) {
+      console.error('❌ Erro ao buscar estoque:', err);
+      return res.status(500).json({ erro: 'Erro ao buscar itens do estoque.' });
+    }
+    res.json(rows);
+  });
+});
+
+// Adicionar novo item ao estoque
+app.post('/api/estoques', (req, res) => {
+  const { descricao, id_categoria, disponivel, fornecedor, notas } = req.body;
+  const data_cadastro = new Date().toISOString();
+  
+  console.log('📦 Adicionando item ao estoque:', { descricao, id_categoria, disponivel });
+  
+  // Validações
+  if (!descricao || descricao.trim().length < 3) {
+    return res.status(400).json({ erro: 'Descrição deve ter pelo menos 3 caracteres.' });
+  }
+  
+  if (!id_categoria || ![1, 2, 3].includes(parseInt(id_categoria))) {
+    return res.status(400).json({ erro: 'Categoria inválida. Use: 1=ESPETOS, 2=BEBIDAS, 3=INSUMOS.' });
+  }
+  
+  db.run(
+    'INSERT INTO Estoque (descricao, id_categoria, data_cadastro, disponivel) VALUES (?, ?, ?, ?)',
+    [descricao.trim(), parseInt(id_categoria), data_cadastro, disponivel ? 1 : 0],
+    function (err) {
+      if (err) {
+        console.error('❌ Erro ao inserir no estoque:', err);
+        return res.status(500).json({ erro: 'Erro ao adicionar item ao estoque.' });
+      }
+      
+      const id_estoque = this.lastID;
+      console.log('✅ Item de estoque criado com ID:', id_estoque);
+      
+      // Buscar o nome da categoria para retornar
+      db.get('SELECT nome FROM Categoria WHERE id_categoria = ?', [id_categoria], (err, categoria) => {
+        res.status(201).json({ 
+          id_estoque, 
+          descricao: descricao.trim(), 
+          id_categoria: parseInt(id_categoria),
+          categoria: categoria ? categoria.nome : 'Categoria não encontrada',
+          data_cadastro,
+          disponivel: disponivel ? 1 : 0,
+          mensagem: 'Item adicionado ao estoque com sucesso!'
+        });
+      });
+    }
+  );
+});
+
+// Editar item do estoque
+app.put('/api/estoques/:id', (req, res) => {
+  const { id } = req.params;
+  const { descricao, id_categoria, disponivel } = req.body;
+  
+  console.log('📝 Editando item do estoque ID:', id, { descricao, id_categoria, disponivel });
+  
+  // Validações
+  if (!descricao || descricao.trim().length < 3) {
+    return res.status(400).json({ erro: 'Descrição deve ter pelo menos 3 caracteres.' });
+  }
+  
+  if (!id_categoria || ![1, 2, 3].includes(parseInt(id_categoria))) {
+    return res.status(400).json({ erro: 'Categoria inválida. Use: 1=ESPETOS, 2=BEBIDAS, 3=INSUMOS.' });
+  }
+  
+  db.run(
+    'UPDATE Estoque SET descricao = ?, id_categoria = ?, disponivel = ? WHERE id_estoque = ?',
+    [descricao.trim(), parseInt(id_categoria), disponivel ? 1 : 0, id],
+    function (err) {
+      if (err) {
+        console.error('❌ Erro ao editar estoque:', err);
+        return res.status(500).json({ erro: 'Erro ao editar item do estoque.' });
+      }
+      
+      if (this.changes === 0) {
+        return res.status(404).json({ erro: 'Item do estoque não encontrado.' });
+      }
+      
+      console.log('✅ Item do estoque editado com sucesso');
+      res.json({ 
+        sucesso: true,
+        mensagem: 'Item do estoque editado com sucesso!'
+      });
+    }
+  );
+});
+
+// Remover item do estoque
+app.delete('/api/estoques/:id', (req, res) => {
+  const { id } = req.params;
+  
+  console.log('🗑️ Removendo item do estoque ID:', id);
+  
+  // Primeiro verifica se o item está sendo usado em algum produto
+  db.get('SELECT COUNT(*) as count FROM Produto WHERE id_estoque = ?', [id], (err, row) => {
+    if (err) {
+      console.error('❌ Erro ao verificar uso do estoque:', err);
+      return res.status(500).json({ erro: 'Erro ao verificar item do estoque.' });
+    }
+    
+    if (row.count > 0) {
+      return res.status(400).json({ 
+        erro: 'Não é possível remover este item pois ele está sendo usado em produtos.' 
+      });
+    }
+    
+    // Remove o item do estoque
+    db.run('DELETE FROM Estoque WHERE id_estoque = ?', [id], function (err) {
+      if (err) {
+        console.error('❌ Erro ao remover estoque:', err);
+        return res.status(500).json({ erro: 'Erro ao remover item do estoque.' });
+      }
+      
+      if (this.changes === 0) {
+        return res.status(404).json({ erro: 'Item do estoque não encontrado.' });
+      }
+      
+      console.log('✅ Item do estoque removido com sucesso');
+      res.json({ 
+        sucesso: true,
+        mensagem: 'Item do estoque removido com sucesso!'
       });
     });
   });
