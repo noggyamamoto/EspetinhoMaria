@@ -5,8 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "node app.js",
-    "legacy": "node server.js"
+    "dev": "node app.js"
   },
   "keywords": ["mvc", "express", "sqlite", "restaurant", "orders"],
   "author": "Espetinho Maria",
