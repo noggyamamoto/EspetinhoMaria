@@ -1,0 +1,181 @@
+# ============================================================================
+# GITIGNORE - ESPETINHO MARIA
+# ============================================================================
+# 
+# Define quais arquivos e diretórios devem ser ignorados pelo Git.
+# Evita upload de arquivos desnecessários, sensíveis ou que causam conflitos.
+#
+# Projeto: Sistema de Pedidos Espetinho Maria (MVC)
+# Data: 24/07/2025
+# ============================================================================
+
+# ============================================================================
+# NODE.JS
+# ============================================================================
+
+# Dependências do Node.js (reinstaladas via 'npm install')
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Lock files (podem causar conflitos entre diferentes versões do npm/yarn)
+package-lock.json
+yarn.lock
+
+# Cache do npm
+.npm
+.eslintcache
+
+# Arquivos temporários do Node.js
+*.tgz
+*.tar.gz
+
+# ============================================================================
+# BANCO DE DADOS
+# ============================================================================
+
+# Arquivos SQLite (contêm dados locais e sensíveis)
+*.sqlite
+*.sqlite3
+*.db
+emteste4.sqlite
+
+# Backups de banco de dados
+*.sql.backup
+*.dump
+
+# ============================================================================
+# LOGS E ARQUIVOS TEMPORÁRIOS
+# ============================================================================
+
+# Logs da aplicação
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Arquivos temporários do sistema
+*.tmp
+*.temp
+.cache/
+.temp/
+
+# ============================================================================
+# AMBIENTE E CONFIGURAÇÕES LOCAIS
+# ============================================================================
+
+# Variáveis de ambiente (contêm informações sensíveis)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Configurações locais do desenvolvedor
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
+
+# Configurações específicas do Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Configurações específicas do macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# ============================================================================
+# UPLOADS E ARQUIVOS GERADOS
+# ============================================================================
+
+# Diretório de uploads (se existir)
+uploads/
+upload/
+temp_uploads/
+
+# Arquivos gerados automaticamente
+dist/
+build/
+coverage/
+.nyc_output/
+
+# Relatórios e documentação gerada
+coverage.html
+test-results.xml
+
+# ============================================================================
+# ARQUIVOS DE DESENVOLVIMENTO
+# ============================================================================
+
+# Arquivos de teste locais
+test-local/
+*.test.local.*
+
+# Arquivos de debug
+debug.log
+.debug/
+
+# Configurações de ferramentas de desenvolvimento
+.eslintrc.local
+.prettierrc.local
+
+# ============================================================================
+# ARQUIVOS SENSÍVEIS OU ESPECÍFICOS DO AMBIENTE
+# ============================================================================
+
+# Chaves e certificados
+*.key
+*.pem
+*.crt
+*.p12
+
+# Arquivos de configuração com dados sensíveis
+config.json
+secrets.json
+
+# ============================================================================
+# ARQUIVOS DE BACKUP
+# ============================================================================
+
+# Backups automáticos
+*.bak
+*.backup
+*.old
+*.orig
+
+# Arquivos de recuperação
+*.recovery
+
+# ============================================================================
+# OBSERVAÇÕES IMPORTANTES
+# ============================================================================
+#
+# INCLUÍDOS NO REPOSITÓRIO:
+# ✅ src/ - Código fonte da arquitetura MVC
+# ✅ public/ - Arquivos estáticos (HTML, CSS, JS, imagens)
+# ✅ app.js - Servidor principal
+# ✅ db.js - Configuração do banco (sem dados sensíveis)
+# ✅ package.json - Dependências e scripts
+# ✅ README.md - Documentação do projeto
+# ✅ .gitignore - Este arquivo
+#
+# EXCLUÍDOS DO REPOSITÓRIO:
+# ❌ node_modules/ - Dependências (npm install)
+# ❌ *.sqlite - Banco de dados com dados locais
+# ❌ .env - Variáveis de ambiente sensíveis
+# ❌ package-lock.json - Lock file (pode causar conflitos)
+# ❌ logs/ - Arquivos de log
+#
+# COMANDOS ÚTEIS:
+# - git status: Ver arquivos ignorados/incluídos
+# - git add .: Adicionar todos os arquivos não ignorados
+# - git commit -m "mensagem": Fazer commit
+# - git push: Enviar para GitHub
+# ============================================================================
