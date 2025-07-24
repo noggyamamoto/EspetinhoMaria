@@ -1,10 +1,16 @@
 {
-  "name": "emteste4-backend",
+  "name": "espetinho-maria-mvc",
   "version": "1.0.0",
-  "main": "server.js",
+  "description": "Sistema de pedidos do Espetinho Maria seguindo arquitetura MVC",
+  "main": "app.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node app.js",
+    "dev": "node app.js",
+    "legacy": "node server.js"
   },
+  "keywords": ["mvc", "express", "sqlite", "restaurant", "orders"],
+  "author": "Espetinho Maria",
+  "license": "MIT",
   "dependencies": {
     "express": "^4.18.2",
     "cookie-parser": "^1.4.6",
