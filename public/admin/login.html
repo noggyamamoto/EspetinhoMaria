@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Painel Administrativo</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <header>
+      <h1>PAINEL ADMINISTRATIVO</h1>
+    </header>
+
+    <main class="container">
+      <div class="left">
+        <img src="img/adm.png" alt="Administrador" />
+      </div>
+
+      <div class="right">
+        <h2>LOGIN</h2>
+        <form id="loginForm" action="/painel-administrador/login" method="POST">
+          <div class="input-group">
+            <input type="text" name="usuario" id="username" placeholder="LOGIN" required />
+          </div>
+
+          <div class="input-group">
+            <input type="password" name="senha" id="password" placeholder="SENHA" required />
+          </div>
+
+           <button type="submit" class="login-btn">ENTRAR</button>
+           <div id="login-error" style="color: red; margin-top: 10px; display: none;"></div>
+        </form>
+      </div>
+    </main>
+
+    <footer>
+      <div class="barra-rodape">
+        <p>Desenvolvido por<a href="https://www.linkedin.com/in/danielle-ester-564052325/" target="_blank"> Danielle Ester</a>, <a class="footer-nome" href="https://www.linkedin.com/in/joão-nogueira-5898902b2/" target="_blank">João Nogueira </a>e<a class="footer-nome" href="https://www.linkedin.com/in/mayara-vieira-00259926b/" target="_blank"> Mayara Vieira</a>.<br>
+          &copy; 2025 todos os direitos reservados.
+        </p>
+      </div>
+        </footer>
+
+    <script src="script.js"></script>
+  </body>
+</html>

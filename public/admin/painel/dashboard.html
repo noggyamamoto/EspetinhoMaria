@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Painel Administrativo</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">&#9776;</button>
+    <div class="painel-container">
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h1>PAINEL ADMINISTRATIVO</h1>
+            </div>
+            <nav class="sidebar-nav">
+                <div class="nav-item">
+                    <div class="nav-item-header" data-page="inicio" data-title="Dashboard">
+                        <div class="nav-item-title">
+                            <img src="img/inicio.svg" alt="Ícone Início" class="nav-icon">
+                            <span>Início</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-item-header">
+                        <div class="nav-item-title">
+                            <img src="img/produtos.svg" alt="Ícone Produtos" class="nav-icon">
+                            <span>Produtos</span>
+                        </div>
+                        <i class="fas fa-chevron-down nav-chevron"></i>
+                    </div>
+                    <ul class="nav-submenu">
+                        <li><a href="#" data-page="consultar-produtos" data-title="Consultar Produtos">Consultar Produtos</a></li>
+                    </ul>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-item-header">
+                        <div class="nav-item-title">
+                            <img src="img/controlpedidos.svg" alt="Ícone Controle de Pedidos" class="nav-icon">
+                            <span>Controle de Pedidos</span>
+                        </div>
+                        <i class="fas fa-chevron-down nav-chevron"></i>
+                    </div>
+                    <ul class="nav-submenu">
+                        <li><a href="#" data-page="pedidos-pendentes" data-title="Pedidos Pendentes">Pedidos Pendentes</a></li>
+                        <li><a href="#" data-page="historico-pedidos" data-title="Histórico de Pedidos">Histórico de Pedidos</a></li>
+                    </ul>
+                </div>
+                <div class="nav-item">
+                    <div class="nav-item-header">
+                         <div class="nav-item-title">
+                            <img src="img/estoque.svg" alt="Ícone Estoque" class="nav-icon">
+                            <span>Estoque</span>
+                        </div>
+                        <i class="fas fa-chevron-down nav-chevron"></i>
+                    </div>
+                    <ul class="nav-submenu">
+                        <li><a href="#" data-page="visualizar-estoque" data-title="Visualizar Estoque">Visualizar Estoque</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </aside>
+        <main class="main-content">
+            <header class="main-header">
+                <h2 id="page-title">DASHBOARD</h2>
+                <a href="/logout" class="btn btn-logout" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sair</span>
+                </a>
+            </header>
+            <section class="content-body">
+                </section>
+        </main>
+    </div>
+    <script src="js/global-functions.js"></script>
+    <script src="js/main.js"></script>
+</body>
+<script>
+// Responsividade: abrir/fechar sidebar
+const menuToggle = document.getElementById('menuToggle');
+const sidebar = document.getElementById('sidebar');
+if (menuToggle && sidebar) {
+  menuToggle.addEventListener('click', function() {
+    sidebar.classList.toggle('aberta');
+  });
+  // Fechar sidebar ao clicar fora (opcional)
+  document.addEventListener('click', function(e) {
+    if (window.innerWidth <= 768 && sidebar.classList.contains('aberta')) {
+      if (!sidebar.contains(e.target) && e.target !== menuToggle) {
+        sidebar.classList.remove('aberta');
+      }
+    }
+  });
+}
+</script>
+</body>
+</html>
